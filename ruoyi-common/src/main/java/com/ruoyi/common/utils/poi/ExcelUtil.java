@@ -174,7 +174,7 @@ public class ExcelUtil<T>
             for (int i = 0; i < heard.getPhysicalNumberOfCells(); i++)
             {
                 Cell cell = heard.getCell(i);
-                if (StringUtils.isNotNull(cell != null))
+                if (StringUtils.isNotNull(cell))
                 {
                     String value = this.getCellValue(heard, i).toString();
                     cellMap.put(value, i);
@@ -224,7 +224,15 @@ public class ExcelUtil<T>
                         }
                         else
                         {
-                            val = Convert.toStr(val);
+                            String dateFormat = field.getAnnotation(Excel.class).dateFormat();
+                            if (StringUtils.isNotEmpty(dateFormat))
+                            {
+                                val = DateUtils.parseDateToStr(dateFormat, (Date) val);
+                            }
+                            else
+                            {
+                                val = Convert.toStr(val);
+                            }
                         }
                     }
                     else if ((Integer.TYPE == fieldType) || (Integer.class == fieldType))
@@ -827,7 +835,7 @@ public class ExcelUtil<T>
         try
         {
             Cell cell = row.getCell(column);
-            if (cell != null)
+            if (StringUtils.isNotNull(cell))
             {
                 if (cell.getCellTypeEnum() == CellType.NUMERIC || cell.getCellTypeEnum() == CellType.FORMULA)
                 {
